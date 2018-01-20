@@ -41,7 +41,6 @@ const getJwtOptions = ( opt, db, step ) => {
     opt.secretOrKey = token.secret;
     opt.issuer = token.issuer;
     opt.audience = token.audience;
-    LG( '  opt : %s', Object.keys(opt));
     step(null, opt);
   } );
 };
@@ -51,6 +50,14 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use(passport.initialize());
+
+app.get('/insecure', (req, res) => {
+    res.send('Insecure response');
+});
+
+app.get('/secure', (req, res) => {
+    res.send('Secure response');
+});
 
 const msg = ' test ';
 let clid = ' not set  ';
@@ -65,18 +72,25 @@ app.get('/', (req, res) => {
       },
       step => {
         getJwtOptions( jwtOptions, db, step);
+      },
+      ( jwtOptions, step ) => {
+        passport.use(new passportJwt.Strategy(jwtOptions, (payload, done) => {
+          LG( `This is where we get to match users to privileges` );
+          // const user = users.getUserById(parseInt(payload.sub));
+          // if (user) {
+          //     return done(null, user, payload);
+          // }
+          return done();
+        }));
+        step(null, 'Passport should be initialized now.');
       }
   ], function (err, rslt) {
-    jwtOptions = rslt
-    LG( 'result', jwtOptions.issuer);
-    // let result = message + rslt + `.`
-    // cb(null, { result });
     
-    // if ( context.secrets[Auth0.__settings.conf] ) config = JSON.parse(context.secrets[Auth0.__settings.conf]);
+    LG( 'result', rslt);
     if ( context.secrets[Auth0.__settings.conf] ) config = JSON.parse(context.secrets[Auth0.__settings.conf]);
     const HTML = renderView({
       title: 'My Webtask View',
-      body: '<h1>Simple WebTask ' + msg + ' view</h1><div>Id: &nbsp; - ' + jwtOptions.audience.doc + '</div>'
+      body: '<h1>Simple WebTask ' + msg + ' view</h1><div>Id: &nbsp; - ' + rslt + '</div>'
     });
   
     res.set('Content-Type', 'text/html');
