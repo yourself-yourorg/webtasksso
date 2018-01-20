@@ -46,8 +46,11 @@
         </div>
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+
         <script type="text/javascript">
+
             let accessToken;
+            const service = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io";
 
             function makeRequest(url) {
                 const headers = {};
@@ -75,10 +78,9 @@
                 window.open('/api/authentication/' + provider + '/start');
             }
 
-            document.getElementById('insecure').onclick = () => makeRequest('/api/insecure');
+            document.getElementById('insecure').onclick = () => makeRequest(service + '/signin');
             document.getElementById('secure').onclick = () => makeRequest('/api/secure');
             document.getElementById('google').onclick = () => authenticate('google');
-            document.getElementById('facebook').onclick = () => authenticate('facebook');
         </script>
 
     </body>
