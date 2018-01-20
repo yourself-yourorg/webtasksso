@@ -7,6 +7,8 @@ import passport from 'passport';
 import passportJwt from 'passport-jwt';
 import async from 'async';
 
+import users from './users';
+
 const LG = console.log;
 
 const Auth0 = {
@@ -30,7 +32,7 @@ const jwtOptions = {
   // The audience stored in the JWT
 //  audience: config.get('authentication.token.audience')
   audience: null,
-  
+
   init : () => {
     return ( req, res, next ) => {
       req.webtaskContext.storage.get( ( error, _data ) => {
@@ -47,29 +49,29 @@ const jwtOptions = {
   }
 };
 
-const users = {
-  list: [{ id: 0, name: 'Graham', providers: [] }],
+// const users = {
+//   list: [{ id: 0, name: 'Graham', providers: [] }],
 
-  createUser: (name, provider, id) => {
-    const user = {
-        id: list.length,
-        name: name,
-        providers: [
-            {
-                provider: provider,
-                id: id
-            }
-        ]
-    };
-    list.push(user);
-    return user;
-  },
+//   createUser: (name, provider, id) => {
+//     const user = {
+//         id: list.length,
+//         name: name,
+//         providers: [
+//             {
+//                 provider: provider,
+//                 id: id
+//             }
+//         ]
+//     };
+//     list.push(user);
+//     return user;
+//   },
 
-  getUserByExternalId: (provider, id) => list.find((u) =>
-        u.providers.findIndex((p) => p.provider == provider && p.id == id) >= 0),
+//   getUserByExternalId: (provider, id) => list.find((u) =>
+//         u.providers.findIndex((p) => p.provider == provider && p.id == id) >= 0),
 
-  getUserById: (id) => list.find((u) => u.id == id),
-};
+//   getUserById: (id) => list.find((u) => u.id == id),
+// };
 
 const app = express();
 
@@ -95,13 +97,9 @@ app.get('/', (req, res) => {
   const db = context.storage;
   async.waterfall([
       step => {
-        LG('Starting ....');
+        LG('Starting with user ....%s', users.list[0].phone);
         step(null, 'dummy!!');
       },
-      // step => {
-      //   LG('prep Jwt Options ....');
-      //   getJwtOptions( jwtOptions, db, step);
-      // },
       ( dummy, step ) => {
         LG('Use passport ....%s', dummy);
         LG( jwtOptions.audience.default );
@@ -116,14 +114,14 @@ app.get('/', (req, res) => {
         step(null, 'Passport should be initialized now.');
       }
   ], function (err, rslt) {
-    
+
     LG( 'result', rslt);
     if ( context.secrets[Auth0.__settings.conf] ) config = JSON.parse(context.secrets[Auth0.__settings.conf]);
     const HTML = renderView({
       title: 'My Webtask View',
       body: '<h1>Simple WebTask ' + msg + ' view</h1><div>Id: &nbsp; - ' + rslt + '</div>'
     });
-  
+
     res.set('Content-Type', 'text/html');
     res.status(200).send(HTML);
   });
