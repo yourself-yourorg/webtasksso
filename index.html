@@ -1,27 +1,86 @@
-<!DOCTYPE html>
-<html>
-<body>
 
-<h2>The XMLHttpRequest Object</h2>
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Social Logins for Single Page Applications</title>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css"  media="screen,projection"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+    	<nav>
+    		<div class="nav-wrapper">
+    			<a href="#" class="brand-logo">Social Logins for Single Page Applications</a>
+    		</div>
+    	</nav>
+        <div class="row">
+            <div class="row">
+                <div class="input-field col s12">
+                    <label class="active" for="status">Response Status</label>
+                    <input id="status" type="text" readonly value="  " />
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <label class="active" for="output">Output from Request:</label>
+                    <input id="output" type="text" readonly value="  " />
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <label class="active" for="output">Access Token:</label>
+                    <input id="accessToken" type="text" readonly value="  " />
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <button class="btn waves-effect waves-light" id="insecure">Insecure Request</button>
+                    <button class="btn waves-effect waves-light" id="secure">Secure Request</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <button class="btn waves-effect waves-light" id="google">Authenticate with Google+</button>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+        <script type="text/javascript">
+            let accessToken;
 
-<button type="button" onclick="loadDoc()">Request data</button>
+            function makeRequest(url) {
+                const headers = {};
+                if (accessToken) {
+                    headers['Authorization'] = 'JWT ' + accessToken;
+                }
 
-<p>Click the button to see the count increase.</p>
+                fetch(url, { headers: headers })
+                    .then((response) => {
+                        $('#status').val(response.statusText);
+                        response.text()
+                            .then((text) => {
+                                $('#output').val(text);
+                            });
 
-<p id="demo"></p>
+                    });
+            }
 
-<script>
-function loadDoc() {
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange=function() {
-    if (this.readyState == 4 && this.status == 200) {
-      document.getElementById("demo").innerHTML = this.responseText;
-    }
-  };
-  xhttp.open("GET", "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/signin?t=" + Math.random(), true);
-  xhttp.send();
-}
-</script>
+            function authenticate(provider) {
+                window.authenticateCallback = function(token) {
+                    accessToken = token;
+                    $('#accessToken').val(accessToken);
+                };
 
-</body>
-</html>
+                window.open('/api/authentication/' + provider + '/start');
+            }
+
+            document.getElementById('insecure').onclick = () => makeRequest('/api/insecure');
+            document.getElementById('secure').onclick = () => makeRequest('/api/secure');
+            document.getElementById('google').onclick = () => authenticate('google');
+            document.getElementById('facebook').onclick = () => authenticate('facebook');
+        </script>
+
+    </body>
+    </html>
+  `
