@@ -104,33 +104,6 @@ function renderView(locals) {
     		</div>
     	</nav>
         <div class="row">
-            <div class="col s12">
-                <div class="section">
-                    <p class="caption">
-                        This project acts as an example on how to implement Social Logins for Single Page Applications by means of Passport.js.<br />
-                    </p>
-                    <p>
-                        Below there are two buttons to make API requests:<br />
-                        <ul class="browser-default">
-                            <li class="collection-item">
-                                <div>
-                                    Insecure Request - This makes a request that will always work regardless of whether you are authenticated
-                                </div>
-                            </li>
-                            <li class="collection-item">
-                                <div>
-                                    Secure Request - This makes a request that will only work if you are authenticated
-                                </div>
-                            </li>
-                        </ul>
-                    </p>
-                    <p>
-                        There are also two buttons that can be used to authenticate, one for Google+ and one for Facebook.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
             <div class="row">
                 <div class="input-field col s12">
                     <label class="active" for="status">Response Status</label>
@@ -158,7 +131,6 @@ function renderView(locals) {
             <div class="row">
                 <div class="input-field col s12">
                     <button class="btn waves-effect waves-light" id="google">Authenticate with Google+</button>
-                    <button class="btn waves-effect waves-light" id="facebook">Authenticate with Facebook</button>
                 </div>
             </div>
         </div>
