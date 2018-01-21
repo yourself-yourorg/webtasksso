@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Screwing around, trying to get Google SSO out of Passport.",
   "main": "index.js",
+  "author": "Martin H. Bramwell,Warehouseman",
+  "license": "MIT",
   "scripts": {
     "ek": "echo $npm_package_name",
     "upd": "wt update --bundle $npm_package_name ./src",
@@ -13,11 +15,12 @@
     "url": "git+https://github.com/yourself-yourorg/webtasksso.git"
   },
   "keywords": [
+    "passport",
+    "express",
+    "spa",
     "serverless",
     "webtask"
   ],
-  "author": "Martin H. Bramwell,Warehouseman",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/yourself-yourorg/webtasksso/issues"
   },
@@ -25,11 +28,14 @@
   "dependencies": {
     "async": "^2.6.0",
     "body-parser": "^1.18.2",
-    "edge": "^7.10.1",
+    "convict": "^4.0.2",
     "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.0",
+    "mustache-express": "^1.2.5",
     "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
     "passport-jwt": "^3.0.1",
-    "request": "^2.83.0",
     "webtask-tools": "^3.2.0"
   }
 }
