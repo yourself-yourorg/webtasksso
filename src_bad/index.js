@@ -8,6 +8,8 @@ import passportJwt from 'passport-jwt';
 import async from 'async';
 
 import users from './users';
+import jwtOptions from './jwtoptions';
+import jwtStrategy from './jwtStrategy';
 
 const LG = console.log;
 
@@ -19,74 +21,36 @@ const Auth0 = {
   },
 }
 
-const jwtOptions = {
-  // Get the JWT from the "Authorization" header.
-  // By default this looks for a "JWT " prefix
-  jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderWithScheme("jwt"),
-  // The secret that was used to sign the JWT
-//  secretOrKey: config.get('authentication.token.secret'),
-  secretOrKey: null,
-  // The issuer stored in the JWT
-//  issuer: config.get('authentication.token.issuer'),
-  issuer: 'issuer?',
-  // The audience stored in the JWT
-//  audience: config.get('authentication.token.audience')
-  audience: null,
-
-  init : () => {
-    return ( req, res, next ) => {
-      req.webtaskContext.storage.get( ( error, _data ) => {
-        let data = _data;
-        if ( error ) throw error;
-        if ( ! data ) throw new Error('No storage has been defined.');
-        const token = data.authentication.token
-        jwtOptions.secretOrKey = token.secret;
-        jwtOptions.issuer = token.issuer;
-        jwtOptions.audience = token.audience;
-        next(null);
-      } );
-    }
-  }
-};
-
-// const users = {
-//   list: [{ id: 0, name: 'Graham', providers: [] }],
-
-//   createUser: (name, provider, id) => {
-//     const user = {
-//         id: list.length,
-//         name: name,
-//         providers: [
-//             {
-//                 provider: provider,
-//                 id: id
-//             }
-//         ]
-//     };
-//     list.push(user);
-//     return user;
-//   },
-
-//   getUserByExternalId: (provider, id) => list.find((u) =>
-//         u.providers.findIndex((p) => p.provider == provider && p.id == id) >= 0),
-
-//   getUserById: (id) => list.find((u) => u.id == id),
-// };
-
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use(passport.initialize());
 
-app.use(jwtOptions.init());
+app.use(jwtOptions.init( passportJwt ));
+
+app.use(users.init(jwtOptions));
+
+app.use(jwtStrategy(passport, jwtOptions ));
+
+app.get('/authentication/google/start', (req, res) => {
+    res.send('authentication/google/start response');
+});
 
 app.get('/insecure', (req, res) => {
     res.send('Insecure response');
 });
 
 app.get('/secure', (req, res) => {
-    res.send('Secure response');
+  // passport.use(new passportJwt.Strategy(jwtOptions, (payload, done) => {
+  //   LG( `This is where we get to match users to privileges` );
+  //   // const user = users.getUserById(parseInt(payload.sub));
+  //   // if (user) {
+  //   //     return done(null, user, payload);
+  //   // }
+  //   return done();
+  // }));
+  res.send('Secure response, with ' + jwtOptions.audience.doc);
 });
 
 const msg = ' test ';
