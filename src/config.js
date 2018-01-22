@@ -4,7 +4,7 @@ const config = convict({
     http: {
         svc_url: {
             doc: 'The microservice URL',
-            default: 'https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/spasso',
+            default: 'https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/webtasksso',
             env: 'SVC_URL'
         }
     },
@@ -41,11 +41,11 @@ const config = convict({
             },
             "issuer": {
                 "doc": "The issuer for the JWT",
-                "default": "spasso"
+                "default": "webtasksso"
             },
             "audience": {
                 "doc": "The audience for the JWT",
-                "default": "spasso"
+                "default": "webtasksso"
             }
         }
     }

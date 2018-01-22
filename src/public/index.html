@@ -29,7 +29,7 @@
             <div class="input-field col s12">
                 <label class="active" for="output">Access Token:</label>
                 <input id="accessToken" type="text" readonly value="  " />
-                <span>V0.0.8 write to server?</span>
+                <span>V0.0.18 trying polling with time out</span>
             </div>
         </div>
         <div class="row">
@@ -50,9 +50,11 @@
 
     <script type="text/javascript">
 
-        let accessToken;
-//      const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/webtasksso";
-        const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/spasso";
+        let accessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTY1NzY4MDgsImV4cCI6MTUxNjU4MDQwOCwiYXVkIjoid2VidGFza3NzbyIsImlzcyI6IndlYnRhc2tzc28iLCJzdWIiOiIxIn0.VDlAmhGnBuUZtNair1qd4MceuD8CHY2X5yHiG-Kx7Ds`;
+        const sid = btoa(new Date().getTime()).replace(/=/g, '');
+
+        const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/webtasksso";
+        // const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/spasso";
         const insecureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/signin";
 
         function makeRequest(url) {
@@ -60,6 +62,8 @@
             if (accessToken) {
                 headers['Authorization'] = 'JWT ' + accessToken;
             }
+            console.log('  Headers ...  ');
+            console.log( headers);
 
             fetch(url, { headers: headers })
                 .then((response) => {
@@ -79,7 +83,7 @@
                 $('#accessToken').val(accessToken);
             };
 
-            window.open(secureService + '/authentication/' + provider + '/start');
+            window.open(secureService + '/authentication/' + provider + '/start?sid=' + sid);
         }
 
         document.getElementById('insecure').onclick = () => makeRequest(insecureService);
@@ -88,5 +92,60 @@
         document.getElementById('facebook').onclick = () => authenticate('facebook');
     </script>
 
+
+    <script type="text/javascript">
+
+        function getURLParameter(name) {
+          return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+        }
+
+        function load(url, callback) {
+            var xhr;
+
+            if(typeof XMLHttpRequest == 'undefined') throw new Error('Unsupported browser!');
+
+            xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = ensureReadiness;
+
+            function ensureReadiness() {
+                if(xhr.readyState < 4) {
+                    return;
+                }
+
+                if(xhr.status !== 200) {
+                    return;
+                }
+
+                // all is well
+                if(xhr.readyState === 4) {
+                    callback(xhr);
+                }
+            }
+
+            xhr.open('GET', url, true);
+            xhr.send('');
+        }
+
+        function task() {
+            load( secureService + '/getsid?sid=' + sid, function(xhr) {
+                // console.log('   loaded with sid ', sid);
+                // console.log( xhr.responseText );
+                document.getElementById('accessToken').value = xhr.responseText;
+            });
+        };
+
+        let timeout = 500;
+        let maxTime = 700000;
+        let timer;
+        setTimeout(function doSomething() {
+
+            task();
+
+            timeout = timeout*1.2;
+            timer = setTimeout(doSomething, timeout);
+            if ( timeout > maxTime ) clearTimeout(timer);
+        }, timeout);
+
+    </script>
 </body>
 </html>

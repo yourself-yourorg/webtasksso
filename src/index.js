@@ -30,9 +30,11 @@ function generateUserToken(req, res) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.status(200).send(
         `<!DOCTYPE html><html><body>
-            <p>User : ${userId}</p>
-            <p>Token : ${accessToken}</p>
+            <p>User is : ${userId}</p>
+            <p>Token is : ${accessToken}</p>
             <script type="text/javascript">
+                console.log('Token is : ');
+                console.log('${accessToken}');
                 window.opener.authenticateCallback('${accessToken}');
                 window.close();
             </script>
@@ -46,6 +48,7 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 
 app.get('/authentication/google/start',
+    (req, res, next) => { LG('* * * Started google authentication\n%s', req.query.sid.replace(/=/g, '')); next(); },
     passport.authenticate('google', { session: false, scope: ['openid', 'profile', 'email'] })
 );
 app.get('/authentication/google/redirect',
@@ -59,6 +62,15 @@ app.get('/authentication/google/redirect',
 //     passport.authenticate('facebook', { session: false }),
 //     generateUserToken);
 
+let sid;
+app.get('/getsid', (req, res, next) => {
+    sid = (req.query.sid || '* =null= *').replace(/=/g, '');
+    res.send(`From server "Get the data record for : ` + sid + '"');
+    next();
+}, () => {
+    LG('* * * Finished getting sid : %s\n', sid);
+});
+
 app.get('/insecure', (req, res, next) => {
     res.send('Insecure response');
     next();
@@ -67,6 +79,7 @@ app.get('/insecure', (req, res, next) => {
 });
 
 app.get('/secure',
+    (req, res, next) => { LG('* * * Started secure response\n'); next(); },
     passport.authenticate(['jwt'], { session: false }),
     (req, res) => {
         res.send('Secure response from ' + JSON.stringify(req.user));
