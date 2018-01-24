@@ -1,151 +1,149 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Social Logins for Single Page Applications</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css"  media="screen,projection"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Social Logins for Single Page Applications</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css"  media="screen,projection"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body>
-	<nav>
-		<div class="nav-wrapper">
-			<a href="#" class="brand-logo">Social Logins for Single Page Applications</a>
-		</div>
-	</nav>
-    <div class="row">
-        <div class="row">
-            <div class="input-field col s12">
-                <label class="active" for="status">Response Status</label>
-                <input id="status" type="text" readonly value="  " />
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s12">
-                <label class="active" for="output">Output from Request:</label>
-                <input id="output" type="text" readonly value="  " />
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s12">
-                <label class="active" for="output">Access Token:</label>
-                <input id="accessToken" type="text" readonly value="  " />
-                <span>V0.0.18 trying polling with time out</span>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s12">
-                <button class="btn waves-effect waves-light" id="insecure">Insecure Request</button>
-                <button class="btn waves-effect waves-light" id="secure">Secure Request</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="input-field col s12">
-                <button class="btn waves-effect waves-light" id="google">Authenticate with Google+</button>
-                <button class="btn waves-effect waves-light" id="facebook">Authenticate with Facebook</button>
-            </div>
-        </div>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">Social Logins for Single Page Applications</a>
     </div>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+  </nav>
+  <div class="row">
+    <div class="row">
+      <div class="input-field col s12">
+        <label class="active" for="status">Response Status</label>
+        <input id="status" type="text" readonly value="  " />
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <label class="active" for="output">Output from Request:</label>
+        <input id="output" type="text" readonly value="  " />
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <label class="active" for="output">Access Token:</label>
+        <input id="accessToken" type="text" readonly value="  " />
+        <span>V0.0.19 adds decreasing polling with time out</span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <button class="btn waves-effect waves-light" id="insecure">Insecure Request</button>
+        <button class="btn waves-effect waves-light" id="secure">Secure Request</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s12">
+        <button class="btn waves-effect waves-light" id="google">Authenticate with Google+</button>
+        <button class="btn waves-effect waves-light" id="facebook">Authenticate with Facebook</button>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
 
-    <script type="text/javascript">
+  <script type="text/javascript">
 
-        let accessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTY1NzY4MDgsImV4cCI6MTUxNjU4MDQwOCwiYXVkIjoid2VidGFza3NzbyIsImlzcyI6IndlYnRhc2tzc28iLCJzdWIiOiIxIn0.VDlAmhGnBuUZtNair1qd4MceuD8CHY2X5yHiG-Kx7Ds`;
-        const sid = btoa(new Date().getTime()).replace(/=/g, '');
+    let accessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTY3NTMzMjMsImV4cCI6MTUxNjc1NjkyMywiYXVkIjoid2VidGFza3NzbyIsImlzcyI6IndlYnRhc2tzc28iLCJzdWIiOiJNVFV4TmpjMU16TXlNemcxT1EifQ.RrbZqYMFbN-tqelFgtyqDNZtuyM4LYFs1PLcvdSQsu8`;
+    const sid = btoa(new Date().getTime()).replace(/=/g, '');
 
-        const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/webtasksso";
-        // const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/spasso";
-        const insecureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/signin";
+    const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/webtasksso";
+    // const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/spasso";
+    const insecureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/signin";
 
-        function makeRequest(url) {
-            const headers = {};
-            if (accessToken) {
-                headers['Authorization'] = 'JWT ' + accessToken;
-            }
-            console.log('  Headers ...  ');
-            console.log( headers);
+    function makeRequest(url) {
+      const headers = {};
+      if (accessToken) {
+        headers['Authorization'] = 'JWT ' + accessToken;
+      }
 
-            fetch(url, { headers: headers })
-                .then((response) => {
-                    $('#status').val(response.statusText);
-                    response.text()
-                        .then((text) => {
-                            $('#output').val(text);
-                        });
-
-                });
-        }
-
-        function authenticate(provider) {
-            window.authenticateCallback = function(token) {
-                console.log('   authenticateCallback  got the call  ');
-                accessToken = token;
-                $('#accessToken').val(accessToken);
-            };
-
-            window.open(secureService + '/authentication/' + provider + '/start?sid=' + sid);
-        }
-
-        document.getElementById('insecure').onclick = () => makeRequest(insecureService);
-        document.getElementById('secure').onclick = () => makeRequest(secureService + '/secure');
-        document.getElementById('google').onclick = () => authenticate('google');
-        document.getElementById('facebook').onclick = () => authenticate('facebook');
-    </script>
-
-
-    <script type="text/javascript">
-
-        function getURLParameter(name) {
-          return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
-        }
-
-        function load(url, callback) {
-            var xhr;
-
-            if(typeof XMLHttpRequest == 'undefined') throw new Error('Unsupported browser!');
-
-            xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = ensureReadiness;
-
-            function ensureReadiness() {
-                if(xhr.readyState < 4) {
-                    return;
-                }
-
-                if(xhr.status !== 200) {
-                    return;
-                }
-
-                // all is well
-                if(xhr.readyState === 4) {
-                    callback(xhr);
-                }
-            }
-
-            xhr.open('GET', url, true);
-            xhr.send('');
-        }
-
-        function task() {
-            load( secureService + '/getsid?sid=' + sid, function(xhr) {
-                // console.log('   loaded with sid ', sid);
-                // console.log( xhr.responseText );
-                document.getElementById('accessToken').value = xhr.responseText;
+      fetch(url, { headers: headers })
+        .then((response) => {
+          $('#status').val(response.statusText);
+          response.text()
+            .then((text) => {
+              $('#output').val(text);
             });
-        };
 
-        let timeout = 500;
-        let maxTime = 700000;
-        let timer;
-        setTimeout(function doSomething() {
+        });
+    }
 
-            task();
+    function authenticate(provider) {
+      window.authenticateCallback = function(token) {
+        console.log('   authenticateCallback  got the call  ');
+        accessToken = token;
+        $('#accessToken').val(accessToken);
+      };
 
-            timeout = timeout*1.2;
-            timer = setTimeout(doSomething, timeout);
-            if ( timeout > maxTime ) clearTimeout(timer);
-        }, timeout);
+      window.open(secureService + '/authentication/' + provider + '/start?sid=' + sid);
+    }
 
-    </script>
+    document.getElementById('insecure').onclick = () => makeRequest(insecureService);
+    document.getElementById('secure').onclick = () => makeRequest(secureService + '/secure');
+    document.getElementById('google').onclick = () => authenticate('google');
+    document.getElementById('facebook').onclick = () => authenticate('facebook');
+  </script>
+
+
+  <script type="text/javascript">
+
+    function getURLParameter(name) {
+      return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+    }
+
+    function load(url, callback) {
+      var xhr;
+
+      if(typeof XMLHttpRequest == 'undefined') throw new Error('Unsupported browser!');
+
+      xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = ensureReadiness;
+
+      function ensureReadiness() {
+        if(xhr.readyState < 4) {
+          return;
+        }
+
+        if(xhr.status !== 200) {
+          return;
+        }
+
+        // all is well
+        if(xhr.readyState === 4) {
+          callback(xhr);
+        }
+      }
+
+      xhr.open('GET', url, true);
+      xhr.send('');
+    }
+
+    function task() {
+      load( secureService + '/getsid?sid=' + sid, function(xhr) {
+        // console.log('   loaded with sid ', sid);
+        // console.log( xhr.responseText );
+        document.getElementById('accessToken').value = xhr.responseText;
+      });
+    };
+
+    let timeout = 10000;
+    let maxTime = 700000;
+    let timer;
+    // setTimeout(function doSomething() {
+
+    //   task();
+
+    //   timeout = timeout*1.2;
+    //   timer = setTimeout(doSomething, timeout);
+    //   if ( timeout > maxTime ) clearTimeout(timer);
+    // }, timeout);
+
+  </script>
 </body>
 </html>

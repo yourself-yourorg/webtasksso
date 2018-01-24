@@ -28,6 +28,7 @@
   "dependencies": {
     "async": "^2.6.0",
     "body-parser": "^1.18.2",
+    "btoa": "^1.1.2",
     "convict": "^4.0.2",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.0",
