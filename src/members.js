@@ -9,7 +9,8 @@ const members = {
     members.getMemberByExternalId(provider, id, db, (err, member) => {
       if ( member ) {
         LG('* * * Does exist, so do NOT member.createMember() :');
-        LG(member);
+        LG(member.id);
+        LG(member.provider);
         cb( err, member );
         return;
       }
@@ -52,7 +53,7 @@ const members = {
           mb.providers.findIndex((p) => p.provider == provider && p.id == id) >= 0);
       }
       LG('Found member %s', member);
-      cb( member );
+      cb( error, member );
     } );
   },
 
@@ -62,7 +63,7 @@ const members = {
       if ( ! error && data && data.members ) {
         member = data.members.find((mb) => mb.email == email);
       }
-      cb( member );
+      cb( error, member );
     } );
   },
 
@@ -72,7 +73,7 @@ const members = {
       if ( ! error && data && data.members ) {
         member = data.members.find((mb) => mb.id == id);
       }
-      cb( member );
+      cb( error, member );
     } );
   },
 

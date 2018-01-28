@@ -11,8 +11,9 @@ const google = {
   db: {},
 
   init : () => {
+    LG('\n* * * google init. * * * ');
+    LG( members.splat );
     return ( req, res, next ) => {
-
       LG('Google auth middleware');
       google.secrets = req.webtaskContext.secrets;
       google.db = req.webtaskContext.storage;
@@ -27,14 +28,6 @@ const google = {
         LG('\n* * * Google configured. * * * ');
         passport.use(
           new passportGoogle.OAuth2Strategy( passportConfig, (accessToken, refreshToken, profile, done) => {
-            LG('* * * Process member. * * * ');
-            LG( google.secrets.GOOGLE_CLIENTID );
-            LG('* accessToken * ');
-            LG( accessToken );
-            LG('* refreshToken * ');
-            LG( refreshToken );
-            LG('* profile * ');
-            LG( profile );
 
             LG('* * * Google : Create Member : ');
             members.createMember(

@@ -5,6 +5,7 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css"  media="screen,projection"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8"/>
 </head>
 <body>
   <nav>
@@ -50,12 +51,54 @@
 
   <script type="text/javascript">
 
-    let accessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTY3NTMzMjMsImV4cCI6MTUxNjc1NjkyMywiYXVkIjoid2VidGFza3NzbyIsImlzcyI6IndlYnRhc2tzc28iLCJzdWIiOiJNVFV4TmpjMU16TXlNemcxT1EifQ.RrbZqYMFbN-tqelFgtyqDNZtuyM4LYFs1PLcvdSQsu8`;
-    const sid = btoa(new Date().getTime()).replace(/=/g, '');
+    const LG = console.log;
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        LG( ` Decoded cookie :: ${decodedCookie}` );
+        var ca = decodedCookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
 
     const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/webtasksso";
-    // const secureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/spasso";
-    const insecureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/signin";
+    // const insecureService = "https://wt-a0a68818c7b34a465e865e888dc419c9-0.run.webtask.io/signin";
+
+    function getURLParameter(name) {
+      return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+    }
+
+    const ky = 'tkn';
+    let accessToken = getURLParameter(ky);
+    LG( `Token = ${accessToken}` );
+    if (typeof(Storage) == "undefined") {
+      $('#accessToken').val( accessToken ? accessToken : 'none');
+    } else {
+      const storedToken = localStorage.getItem(ky);
+      if ( accessToken ) {
+        localStorage.setItem(ky, accessToken);
+        LG( `Storage :: ${localStorage.getItem(ky)}` );
+
+        LG( `Location = ${window.location.href}` );
+        const redir = window.location.href.replace(`?${ky}=${accessToken}`, ``);
+        LG( `redir = ${redir}` );
+        location.assign(redir);
+      } else if ( storedToken ) {
+        accessToken = storedToken;
+        $('#accessToken').val( storedToken );
+      }
+    }
+
+
 
     function makeRequest(url) {
       const headers = {};
@@ -81,69 +124,14 @@
         $('#accessToken').val(accessToken);
       };
 
-      window.open(secureService + '/authentication/' + provider + '/start?sid=' + sid);
+      window.location.assign(secureService + '/authentication/' + provider + '/start');
     }
 
-    document.getElementById('insecure').onclick = () => makeRequest(insecureService);
+    document.getElementById('insecure').onclick = () => makeRequest(secureService + '/insecure');
     document.getElementById('secure').onclick = () => makeRequest(secureService + '/secure');
     document.getElementById('google').onclick = () => authenticate('google');
     document.getElementById('facebook').onclick = () => authenticate('facebook');
   </script>
 
-
-  <script type="text/javascript">
-
-    function getURLParameter(name) {
-      return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
-    }
-
-    function load(url, callback) {
-      var xhr;
-
-      if(typeof XMLHttpRequest == 'undefined') throw new Error('Unsupported browser!');
-
-      xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = ensureReadiness;
-
-      function ensureReadiness() {
-        if(xhr.readyState < 4) {
-          return;
-        }
-
-        if(xhr.status !== 200) {
-          return;
-        }
-
-        // all is well
-        if(xhr.readyState === 4) {
-          callback(xhr);
-        }
-      }
-
-      xhr.open('GET', url, true);
-      xhr.send('');
-    }
-
-    function task() {
-      load( secureService + '/getsid?sid=' + sid, function(xhr) {
-        // console.log('   loaded with sid ', sid);
-        // console.log( xhr.responseText );
-        document.getElementById('accessToken').value = xhr.responseText;
-      });
-    };
-
-    let timeout = 10000;
-    let maxTime = 700000;
-    let timer;
-    // setTimeout(function doSomething() {
-
-    //   task();
-
-    //   timeout = timeout*1.2;
-    //   timer = setTimeout(doSomething, timeout);
-    //   if ( timeout > maxTime ) clearTimeout(timer);
-    // }, timeout);
-
-  </script>
 </body>
 </html>

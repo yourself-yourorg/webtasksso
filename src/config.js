@@ -41,7 +41,7 @@ const config = convict({
             },
             "issuer": {
                 "doc": "The issuer for the JWT",
-                "default": "webtasksso"
+                "default": "google"
             },
             "audience": {
                 "doc": "The audience for the JWT",
