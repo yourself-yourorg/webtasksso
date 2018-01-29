@@ -4,19 +4,13 @@ import express from 'express';
 import { fromExpress } from 'webtask-tools';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-// import async from 'async';
-
-import members from './members';
-import google from './authentication/google';
 import gapis from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 
-
+import token from './token';
+import members from './members';
+import google from './authentication/google';
 import jwt from './authentication/jwt';
-
-const token = require('./token');
-
-require('./authentication/facebook');
 
 const LG = console.log;
 
