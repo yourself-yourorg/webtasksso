@@ -26,15 +26,13 @@
   },
   "homepage": "https://github.com/yourself-yourorg/webtasksso#readme",
   "dependencies": {
-    "async": "^2.6.0",
     "body-parser": "^1.18.2",
     "btoa": "^1.1.2",
-    "convict": "^4.0.2",
     "express": "^4.16.2",
+    "google-auth-library": "^1.1.0",
+    "googleapis": "^25.0.0",
     "jsonwebtoken": "^8.1.0",
-    "mustache-express": "^1.2.5",
     "passport": "^0.4.0",
-    "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",
     "passport-jwt": "^3.0.1",
     "webtask-tools": "^3.2.0"

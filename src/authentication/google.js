@@ -1,6 +1,5 @@
 const passport = require('passport');
 const passportGoogle = require('passport-google-oauth');
-const config = require('../config');
 
 import members from '../members';
 
@@ -11,45 +10,45 @@ const google = {
   db: {},
 
   init : () => {
-    LG('\n* * * google init. * * * ');
-    LG( members.splat );
+    // LG('\n* * * google init. * * * ');
     return ( req, res, next ) => {
-      LG('Google auth middleware');
+      // LG('Google auth middleware');
       google.secrets = req.webtaskContext.secrets;
       google.db = req.webtaskContext.storage;
 
       const passportConfig = {
-        clientID: config.get('authentication.google.clientId'),
-        clientSecret: config.get('authentication.google.clientSecret'),
-        callbackURL: config.get('http.svc_url') + '/authentication/google/redirect'
+        clientID: google.secrets.GOOGLE_CLIENTID,
+        clientSecret: google.secrets.GOOGLE_CLIENTSECRET,
+        callbackURL: google.secrets.GOOGLE_REDIRECT_URI
       };
 
+      // LG(req.url);
       if (passportConfig.clientID) {
-        LG('\n* * * Google configured. * * * ');
+        // LG(`\n* * * Google configured :: ${passportConfig.callbackURL}`);
         passport.use(
           new passportGoogle.OAuth2Strategy( passportConfig, (accessToken, refreshToken, profile, done) => {
 
-            LG('* * * Google : Create Member : ');
-            members.createMember(
-                profile.displayName,
-                'google',
-                profile.id,
-                profile.emails[0].value,
-                google.db,
-                ( err, member ) => {
-                  LG(`Google strategy got back member :`);
-                  LG(member);
-                  return done(null, member);
+            // LG('* * * Google : Create Member : ');
+            // LG( accessToken );
+            // LG( refreshToken );
+            const spec = {
+              name: profile.displayName,
+              email: profile.emails[0].value,
+              providers: [
+                {
+                  provider: 'google',
+                  id: profile.id,
+                  tkn: accessToken,
+                  rfr: refreshToken
                 }
-                // ( member ) => {
-                //     LG(`whoopie %s`, member);
-                //     res.send(
-                //         member ?
-                //         `Search returned member : '${member.providers[0].provider}/${member.providers[0].id}'.` :
-                //         `Search returned : None.`
-                //     );
-                // }
-            );
+              ]
+            };
+
+            members.createMember(spec, google.db, ( err, member ) => {
+              // LG(`Google strategy got back member :`);
+              // LG(member);
+              return done(null, member);
+            });
 
           })
         );

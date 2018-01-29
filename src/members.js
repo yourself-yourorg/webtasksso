@@ -2,31 +2,22 @@ import btoa from 'btoa';
 const LG = console.log;
 
 const members = {
-  createMember: (name, provider, id, email, db, cb) => {
+  createMember: (spec, db, cb) => {
 
-    LG('* * * Creating member %s', name);
+    // LG('* * * Creating member %s', spec.name);
 
-    members.getMemberByExternalId(provider, id, db, (err, member) => {
+    const prov = spec.providers[0];
+    members.getMemberByExternalId(prov.provider, prov.id, db, (err, member) => {
       if ( member ) {
-        LG('* * * Does exist, so do NOT member.createMember() :');
-        LG(member.id);
-        LG(member.provider);
+        // LG('* * * Does exist, so do NOT member.createMember() :');
+        // LG(member.id);
+        // LG(member.provider);
         cb( err, member );
         return;
       }
 
-      LG('* * * None exist, so member.createMember() :');
-      const spec = {
-        id: btoa(new Date().getTime()).replace(/=/g, ''),
-        name: name,
-        email: email,
-        providers: [
-          {
-            provider: provider,
-            id: id
-          }
-        ]
-      };
+      // LG('* * * None exist, so member.createMember() :');
+      spec['id'] = btoa(new Date().getTime()).replace(/=/g, '');
 
       db.get( ( error, data ) => {
         if ( ! error && data && data.members ) {
@@ -36,7 +27,7 @@ const members = {
               LG('Could not add user to storage');
               throw error;
             }
-            LG('New user appended to storage : %s', spec.name);
+            // LG('New user appended to storage : %s', spec.name);
             cb( error, spec );
           });
         }
@@ -45,14 +36,14 @@ const members = {
   },
 
   getMemberByExternalId: (provider, id, db, cb) => {
-    LG('Look for member %s', id);
+    // LG('Look for member %s', id);
     db.get( ( error, data ) => {
       let member;
       if ( ! error && data && data.members ) {
         member = data.members.find((mb) =>
           mb.providers.findIndex((p) => p.provider == provider && p.id == id) >= 0);
       }
-      LG('Found member %s', member);
+      // LG('Found member %s', member);
       cb( error, member );
     } );
   },
@@ -84,18 +75,6 @@ const members = {
         if ( error ) throw error;
         if ( ! data ) throw new Error('No storage has been defined.');
         data.members = data.members || [];
-        // if ( data.members.length < 1 ) {
-        //   data.members.push({ id: 0, email: 'a@b.c', name: 'Gooraham', providers: [] });
-        //   LG(' Members list has %s', members.list[0].name);
-        //   LG( members );
-        //   db.set( data, error => {
-        //     if ( error ) {
-        //       LG('Could not add member list to storage');
-        //       throw error;
-        //     }
-        //     LG('Members placed in storage %s', data.members[0].name);
-        //   });
-        // }
 
         next(null);
       } );

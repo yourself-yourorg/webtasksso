@@ -1,18 +1,19 @@
 const jwt = require('jsonwebtoken');
-const config = require('./config');
 
-// Generate an Access Token for the given User ID
-function generateAccessToken(userId) {
+function generateAccessToken(request) {
+
+    const secrets = request.webtaskContext.secrets;
+
     const expiresIn = '1 hour';
-    const audience = config.get('authentication.token.audience');
-    const issuer = config.get('authentication.token.issuer');
-    const secret = config.get('authentication.token.secret');
+    const audience = secrets.JWT_AUDIENCE;
+    const issuer = secrets.JWT_ISSUER;
+    const secret = secrets.JWT_SIGNING_KEY;
 
     const token = jwt.sign({}, secret, {
         expiresIn: expiresIn,
         audience: audience,
         issuer: issuer,
-        subject: userId.toString()
+        subject: request.user.id.toString()
     });
 
     return token;
