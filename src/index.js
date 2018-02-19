@@ -61,25 +61,25 @@ app.get(`${GOOGAUTH}/redirect`,
     generateUserToken,
 );
 
-// app.get('/testMe', (req, res, next) => {
-//     const timeCode = parseInt(req.query.t) * 1000;
-//     const date = new Date( timeCode );
-//     // LG(`* * Code : ${timeCode} & Date : ${date}`);
-//     const hours = date.getHours(); // minutes part from the timestamp
-//     const minutes = date.getMinutes(); // seconds part from the timestamp
-//     const seconds = date.getSeconds(); // will display time in 10:30:23 format
-//     const formattedTime = hours + ':' + minutes + ':' + seconds;
-//     res.send(`Got ${timeCode}  & Date : ${date}`);
-//     next();
-// }, () => {
-//     LG('* * * Finished Test : Create Member : ');
-// });
-
 app.get('/insecure', (req, res, next) => {
     res.send('Insecure response');
     next();
 }, () => {
     LG('* * * Finished sending insecure response\n');
+});
+
+app.get('/purge', (req, res, next) => {
+    members.purgeAllMembers(req, err => {
+        if (err) {
+            LG( `Failed purge of members ::${err}` );
+            return;
+        }
+        LG('\n* * * Purged all members. * * * ');
+    });
+    res.send('Purge response');
+    next();
+}, () => {
+    LG('* * * Finished sending "purge" response\n');
 });
 
 app.get('/secure',

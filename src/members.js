@@ -68,6 +68,15 @@ const members = {
     } );
   },
 
+  purgeAllMembers: (req, cb) => {
+    // LG('Purging members');
+    req.webtaskContext.storage.set({ members: [] }, { force: [] },
+      function (error) {
+        if (error) return cb(error);
+        // LG('Purged members');
+    });
+  },
+
   init : () => {
     return ( req, res, next ) => {
       const db = req.webtaskContext.storage;
