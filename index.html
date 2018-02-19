@@ -48,7 +48,7 @@
     <div class="row">
       <div class="input-field col s12">
         <button class="btn waves-effect waves-light" id="google">Authenticate with Google+</button>
-        <!-- button class="btn waves-effect waves-light" id="facebook">Authenticate with Facebook</button -->
+        <button class="btn waves-effect waves-light" id="purge">Purge Storage</button -->
       </div>
     </div>
   </div>
@@ -111,10 +111,11 @@
 
     $('#accessToken').val( accessToken ? accessToken : 'none');
 
+    document.getElementById('purge').onclick = () => makeRequest(secureService + '/purge');
     document.getElementById('insecure').onclick = () => makeRequest(secureService + '/insecure');
     document.getElementById('secure').onclick = () => makeRequest(secureService + '/secure');
     document.getElementById('google').onclick = () => authenticate('google');
-    document.getElementById('facebook').onclick = () => authenticate('facebook');
+    // document.getElementById('facebook').onclick = () => authenticate('facebook');
   </script>
 
 </body>
