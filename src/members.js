@@ -1,9 +1,10 @@
 import btoa from 'btoa';
+import jwt from 'jsonwebtoken';
+
 const LG = console.log;
 
 const members = {
   createMember: (spec, db, cb) => {
-
     // LG('* * * Creating member %s', spec.name);
 
     const prov = spec.providers[0];
@@ -15,7 +16,6 @@ const members = {
         cb( err, member );
         return;
       }
-
       // LG('* * * None exist, so member.createMember() :');
       spec['id'] = btoa(new Date().getTime()).replace(/=/g, '');
 
@@ -33,6 +33,44 @@ const members = {
         }
       } );
     } );
+  },
+
+  logOutMember: (req, cb) => {
+    LG('Log out member');
+    // LG(req.webtaskContext.headers.authorization);
+    const tkn = req.webtaskContext.headers.authorization.split(/[ ,]+/)[1];
+    // LG(tkn);
+    LG(jwt.decode(tkn).id);
+    const id = jwt.decode(req.webtaskContext.headers.authorization.split(/[ ,]+/)[1]).id;
+    // LG(req.params);
+    // LG('...........................');
+    LG(` ${req.params.memb}  vs  ${id}`);
+    if ( req.params.memb === id ) LG('PROCEED WITH LOG OUT');
+
+    const db = req.webtaskContext.storage;
+    db.get( ( error, data ) => {
+      let member;
+      if ( ! error && data && data.members ) {
+        let pos = data.members.findIndex(mb => mb.id == id);
+        LG(`Found ${id} at pos ${pos}`);
+        delete data.members[pos].providers[0];
+        db.set( data, error => {
+          if ( error ) {
+            LG('Could not update user in storage');
+            throw error;
+          }
+          // LG('New user appended to storage : %s', spec.name);
+          // cb( error, id );
+        });
+      }
+      cb( error, member );
+    } );
+
+    // req.webtaskContext.storage.set({ members: [] }, { force: [] },
+    //   function (error) {
+    //     if (error) return cb(error);
+    //     // LG('Purged members');
+    // });
   },
 
   getMemberByExternalId: (provider, id, db, cb) => {

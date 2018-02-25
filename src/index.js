@@ -21,6 +21,11 @@ function getStaticHost(req) {
 
 // Generate the Token for the member authenticated in the request
 function generateUserToken(req, res) {
+
+    LG('%%%%%');
+    LG(req.user);
+    LG('%%%%%');
+
     const accessToken = token.generateAccessToken(req);
     const static_host = getStaticHost(req);
     res.set('Content-Type', 'text/html');
@@ -68,23 +73,47 @@ app.get('/insecure', (req, res, next) => {
     LG('* * * Finished sending insecure response\n');
 });
 
-app.get('/purge', (req, res, next) => {
-    members.purgeAllMembers(req, err => {
-        if (err) {
-            LG( `Failed purge of members ::${err}` );
-            return;
-        }
-        LG('\n* * * Purged all members. * * * ');
-    });
-    res.send('Purge response');
-    next();
-}, () => {
-    LG('* * * Finished sending "purge" response\n');
-});
+app.get('/lgo/:memb',
+    passport.authenticate(['jwt'], { session: false }),
+    (req, res, next) => {
+        members.logOutMember(req, err => {
+            if (err) {
+                LG( `Failed purge of members ::${err}` );
+                return;
+            }
+            LG('\n* * * Clear member session. * * * ');
+        });
+        res.send('Logout response');
+        next();
+    }, () => {
+        LG('* * * Finished sending "log out" response\n');
+    }
+);
+
+app.get('/purge',
+    passport.authenticate(['jwt'], { session: false }),
+    (req, res, next) => {
+        members.purgeAllMembers(req, err => {
+            if (err) {
+                LG( `Failed purge of members ::${err}` );
+                return;
+            }
+            LG('\n* * * Purged all members. * * * ');
+        });
+        res.send('Purge response');
+        next();
+    }, () => {
+        LG('* * * Finished sending "purge" response\n');
+    }
+);
 
 app.get('/secure',
     passport.authenticate(['jwt'], { session: false }),
     (req, res) => {
+
+        LG('----');
+        LG(token);
+        LG('----');
 
         const secrets = req.webtaskContext.secrets;
         const provider = req.user.providers[0];
