@@ -6,6 +6,8 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import gapis from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
+import btoa from 'btoa';
+import atob from 'atob';
 
 import token from './token';
 import members from './members';
@@ -15,16 +17,27 @@ import jwt from './authentication/jwt';
 const LG = console.log;
 
 function getStaticHost(req) {
+    LG('%%%%%');
+    // LG(req.query);
+    // LG(req.query.state);
+    // LG(atob(req.query.state));
+    // LG(atob(req.query.state).mode);
+    // LG(JSON.parse(atob(req.query.state)));
+    LG(JSON.parse(atob(req.query.state)).mode);
+    let mode = JSON.parse(atob(req.query.state)).mode;
+    LG(`Dynamic mode is '${ mode }'`);
+
     const secrets = req.webtaskContext.secrets;
-    return secrets[secrets.STATIC_MODE];
+    if (!mode) mode = secrets.STATIC_MODE;
+    let host = secrets[mode];
+    LG(host);
+    LG('%%%%%');
+
+    return host;
 }
 
 // Generate the Token for the member authenticated in the request
 function generateUserToken(req, res) {
-
-    LG('%%%%%');
-    LG(req.user);
-    LG('%%%%%');
 
     const accessToken = token.generateAccessToken(req);
     const static_host = getStaticHost(req);
@@ -44,22 +57,24 @@ app.use(google.init());
 app.use(jwt.init());
 
 const GOOGAUTH = `/authentication/google`;
-app.get(`${GOOGAUTH}/start`,
-    passport.authenticate(
-        'google',
-        {
-            session: false,
-            scope: [
-              'profile',
-              'email',
-              'https://www.googleapis.com/auth/spreadsheets',
-              'https://www.googleapis.com/auth/drive',
-            ],
-            accessType: 'offline',
-            approvalPrompt: 'force'
-        }
-    )
-);
+app.get(`${GOOGAUTH}/start`, (req, res, next) => {
+    LG('* * * Calling Google * * * \n');
+    let mode = req.query.mode || 'STATIC_DEV';
+    LG(mode);
+    let state = btoa(`{ "mode": "${mode}" }`);
+    passport.authenticate('google', {
+        session: false,
+        scope: [
+          'profile',
+          'email',
+          'https://www.googleapis.com/auth/spreadsheets',
+          'https://www.googleapis.com/auth/drive',
+        ],
+        accessType: 'offline',
+        approvalPrompt: 'force',
+        state
+    })(req, res, next);
+});
 
 app.get(`${GOOGAUTH}/redirect`,
     passport.authenticate('google', { session: false }),
