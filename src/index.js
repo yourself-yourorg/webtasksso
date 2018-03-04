@@ -8,17 +8,21 @@ import gapis from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import btoa from 'btoa';
 import atob from 'atob';
+import Ipsum from 'bavaria-ipsum';
 
 import token from './token';
 import members from './members';
 import google from './authentication/google';
 import jwt from './authentication/jwt';
 
+const ipsum = new Ipsum();
+
 const LG = console.log;
 
 function getStaticHost(req) {
     LG('%%%%%');
-    // LG(req.query);
+    LG(req.query);
+    if(!req.query.state) return null;
     // LG(req.query.state);
     // LG(atob(req.query.state));
     // LG(atob(req.query.state).mode);
@@ -122,6 +126,38 @@ app.get('/purge',
     }
 );
 
+const articles = [
+  {
+    id: 1,
+    title: ipsum.generateSentence(),
+    content: ipsum.generateParagraph()
+  },
+  {
+    id: 2,
+    title: ipsum.generateSentence(),
+    content: ipsum.generateParagraph()
+  },
+  {
+    id: 3,
+    title: ipsum.generateSentence(),
+    content: ipsum.generateParagraph()
+  }
+];
+const modules = {
+  articles: (task, req, res, next) => { LG(`Get articles :: ${task}. `); },
+};
+app.get('/api/:module',
+    (req, res, next) => {
+        modules[req.params.module]('GET', req, res, next);
+        LG(`Get module <${req.params.module}> :: Sending ${articles[0].title}`);
+        // LG(articles);
+        res.json(articles);
+        next();
+    }, () => {
+        LG('* * * Finished sending "purge" response\n');
+    }
+);
+
 app.get('/secure',
     passport.authenticate(['jwt'], { session: false }),
     (req, res) => {
@@ -214,7 +250,9 @@ app.get('/', (req, res) => {
     const HTML = renderView({
       url: getStaticHost(req),
     });
-
+// LG('%%%%%%%%%%%%%%%%%%%%%%%');
+// LG(req);
+LG('%%%%%%%%%%%%%%%%%%%%%%%');
     res.set('Content-Type', 'text/html');
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

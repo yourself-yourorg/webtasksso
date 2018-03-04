@@ -27,6 +27,7 @@
   "homepage": "https://github.com/yourself-yourorg/webtasksso#readme",
   "dependencies": {
     "atob": "^2.0.3",
+    "bavaria-ipsum": "^1.0.3",
     "body-parser": "^1.18.2",
     "btoa": "^1.1.2",
     "express": "^4.16.2",
