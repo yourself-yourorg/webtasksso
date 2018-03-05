@@ -8,14 +8,13 @@ import gapis from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import btoa from 'btoa';
 import atob from 'atob';
-import Ipsum from 'bavaria-ipsum';
 
 import token from './token';
 import members from './members';
 import google from './authentication/google';
 import jwt from './authentication/jwt';
 
-const ipsum = new Ipsum();
+import api from './api';
 
 const LG = console.log;
 
@@ -59,6 +58,35 @@ app.use(members.init());
 app.use(google.init());
 
 app.use(jwt.init());
+
+// app.patch('/api/articles/:id', api.PATCH);
+
+app.get('/api/:module',
+    passport.authenticate(['jwt'], { session: false }),
+    api.LIST
+);
+app.post('/api/:module',
+    passport.authenticate(['jwt'], { session: false }),
+    api.POST
+);
+
+app.get('/api/:module/:id',
+    passport.authenticate(['jwt'], { session: false }),
+    api.GET
+);
+app.patch('/api/:module/:id',
+    passport.authenticate(['jwt'], { session: false }),
+    api.PATCH
+);
+app.put('/api/:module/:id',
+    passport.authenticate(['jwt'], { session: false }),
+    api.PUT
+);
+app.delete('/api/:module/:id',
+    passport.authenticate(['jwt'], { session: false }),
+    api.DELETE
+);
+
 
 const GOOGAUTH = `/authentication/google`;
 app.get(`${GOOGAUTH}/start`, (req, res, next) => {
@@ -120,38 +148,6 @@ app.get('/purge',
             LG('\n* * * Purged all members. * * * ');
         });
         res.send('Purge response');
-        next();
-    }, () => {
-        LG('* * * Finished sending "purge" response\n');
-    }
-);
-
-const articles = [
-  {
-    id: 1,
-    title: ipsum.generateSentence(),
-    content: ipsum.generateParagraph()
-  },
-  {
-    id: 2,
-    title: ipsum.generateSentence(),
-    content: ipsum.generateParagraph()
-  },
-  {
-    id: 3,
-    title: ipsum.generateSentence(),
-    content: ipsum.generateParagraph()
-  }
-];
-const modules = {
-  articles: (task, req, res, next) => { LG(`Get articles :: ${task}. `); },
-};
-app.get('/api/:module',
-    (req, res, next) => {
-        modules[req.params.module]('GET', req, res, next);
-        LG(`Get module <${req.params.module}> :: Sending ${articles[0].title}`);
-        // LG(articles);
-        res.json(articles);
         next();
     }, () => {
         LG('* * * Finished sending "purge" response\n');
