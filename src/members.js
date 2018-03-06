@@ -79,7 +79,12 @@ const members = {
       let member;
       if ( ! error && data && data.members ) {
         member = data.members.find((mb) =>
-          mb.providers.findIndex((p) => p.provider == provider && p.id == id) >= 0);
+          0 < mb.providers.findIndex((p) => {
+            if (p && p.provider && p.id) {
+              return p.provider == provider && p.id == id
+            }
+          })
+        );
       }
       // LG('Found member %s', member);
       cb( error, member );
