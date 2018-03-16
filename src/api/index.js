@@ -1,9 +1,11 @@
 import articles from './article';
+import person from './person';
 
 const LG = console.log;
 
 const modules = {
   articles,
+  person,
 };
 // export default (req, res, next) => {
 //   LG(`Module :: ${req.params.module} Method :: ${req.method}`)
