@@ -53,12 +53,14 @@ const doList = (req, res, next) => {
   let payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
 
     LG('\n\n\n\n*************************\n\n\n');
-  LG(`'testGetPage', 'request', ${JSON.stringify(req.query)}` );
-  LG(`'testGetPage', 'request', ${JSON.stringify(req.params)}` );
+  // LG(`'doList', 'req.query ', ${JSON.stringify(req.query)}` );
+  LG(`'doList', 'req.params', ${JSON.stringify(req.params)}` );
   dataForGetPage.size = req.query.c;
   dataForGetPage.start = req.query.s;
-  dataForGetPage.store = req.query.module;
+  dataForGetPage.store = req.params.module;
 
+  LG(`'doList', 'dataForGetPage', ${dataForGetPage}`);
+  LG(dataForGetPage);
   let parameters = JSON.stringify(dataForGetPage);
   LG(`'testGetPage', 'parameters', ${parameters}` );
   let ciphertext = Tea.encrypt(parameters, 'MTUyMDE5NTQ4NTE2Mg');
