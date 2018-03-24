@@ -225,4 +225,5 @@ Tea.utf8Decode = function(utf8Str) {
 
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-if (typeof module != 'undefined' && module.exports) module.exports = Tea; // CommonJS export
+// if (typeof module != 'undefined' && module.exports) module.exports = { Tea }; // CommonJS export
+export default Tea;

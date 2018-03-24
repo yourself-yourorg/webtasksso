@@ -1,5 +1,5 @@
 import { Client as Backend} from 'node-rest-client';
-import Tea from '../../utils/tea';
+import utils from '../../utils';
 // import Ipsum from 'bavaria-ipsum';
 
 // const ipsum = new Ipsum();
@@ -40,35 +40,49 @@ const MODULE = 'person';
 //   LG(`Create ${MODULE}.  Article #${id} created.`);
 //   res.json(article);
 // };
-var dataForGetPage = {
-  size: "0",
-  start: "0",
-  store: "",
-  id: ""
+const dbAPI = 'https://script.google.com/macros/s/AKfycbyuyo0Wi60kHOFoswK3GTVVeWTfEEYF9JBl7NoL4nAxe08t9fo/exec';
+const payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
+
+const doRetrieve = (req, res, next) => {
+  LG(`\n\n\n\n******* Getting ${MODULE}  ******\n\n\n`);
+
+  let urltext = utils.wrapParams(req);
+  LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
+
+  let call = `${dbAPI}?q=${urltext}`;
+  LG(call);
+  (new Backend).get(call, (data, response) => {
+    LG('\n\n\n\n*************************');
+    LG(data);
+    // LG('.............');
+    // LG(payload);
+    // LG(urltext);
+    LG('*************\n\n\n\n');
+
+    res.json(data);
+    return;
+
+  })
+}
+
+const doCreate = (req, res, next) => {
+    const data = { x: 'Not implemented'}
+    LG('\n\n\n\n*********  doCreate ***********');
+    LG(data);
+    LG('*************\n\n\n\n');
+
+    res.json(data);
+    return;
 }
 
 const doList = (req, res, next) => {
-  LG(`Listing all ${MODULE}s..`);
-  let dbAPI = 'https://script.google.com/macros/s/AKfycbyuyo0Wi60kHOFoswK3GTVVeWTfEEYF9JBl7NoL4nAxe08t9fo/exec';
-  let payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
+  LG(`\n\n\n\n******* Listing all ${MODULE}s ******\n\n\n`);
 
-    LG('\n\n\n\n*************************\n\n\n');
-  // LG(`'doList', 'req.query ', ${JSON.stringify(req.query)}` );
-  LG(`'doList', 'req.params', ${JSON.stringify(req.params)}` );
-  dataForGetPage.size = req.query.c;
-  dataForGetPage.start = req.query.s;
-  dataForGetPage.store = req.params.module;
+  let urltext = utils.wrapParams(req);
+  LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
 
-  LG(`'doList', 'dataForGetPage', ${dataForGetPage}`);
-  LG(dataForGetPage);
-  let parameters = JSON.stringify(dataForGetPage);
-  LG(`'testGetPage', 'parameters', ${parameters}` );
-  let ciphertext = Tea.encrypt(parameters, 'MTUyMDE5NTQ4NTE2Mg');
-  LG(`'testGetPage', 'ciphertext', ${ciphertext}` );
-  let urltext = encodeURIComponent(ciphertext);
-  LG(`'testGetPage', 'encoded ciphertext', ${urltext}` );
-
-  let call = `${dbAPI}?q=${payload}`;
+  let call = `${dbAPI}?q=${urltext}`;
+  LG(call);
   (new Backend).get(call, (data, response) => {
     LG('\n\n\n\n*************************');
     LG(data);
@@ -169,8 +183,8 @@ const doList = (req, res, next) => {
 // };
 
 export default {
-  // POST: (req, res, next) => doCreate(req, res, next),
-  // GET: (req, res, next) => doRetrieve(req, res, next),
+  POST: (req, res, next) => doCreate(req, res, next),
+  GET: (req, res, next) => doRetrieve(req, res, next),
   LIST: (req, res, next) => doList(req, res, next),
   // PATCH: (req, res, next) => doReplace(req, res, next),  // FIXME
   // PUT: (req, res, next) => doReplace(req, res, next),
