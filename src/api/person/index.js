@@ -40,7 +40,8 @@ const MODULE = 'person';
 //   LG(`Create ${MODULE}.  Article #${id} created.`);
 //   res.json(article);
 // };
-const dbAPI = 'https://script.google.com/macros/s/AKfycbyuyo0Wi60kHOFoswK3GTVVeWTfEEYF9JBl7NoL4nAxe08t9fo/exec';
+// const dbAPI = 'https://script.google.com/macros/s/AKfycbyuyo0Wi60kHOFoswK3GTVVeWTfEEYF9JBl7NoL4nAxe08t9fo/exec';
+const dbAPI = 'https://script.google.com/macros/s/AKfycbwYXfwWirehfqH4F8KF-RUCOq65DJ0kYHPH86q9iqyPbNscYQ/exec';
 const payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
 
 const doRetrieve = (req, res, next) => {
@@ -51,7 +52,18 @@ const doRetrieve = (req, res, next) => {
 
   let call = `${dbAPI}?q=${urltext}`;
   LG(call);
-  (new Backend).get(call, (data, response) => {
+
+
+var args = {
+  requestConfig: {
+    timeout: 140000, //request timeout in milliseconds
+  },
+  responseConfig: {
+    timeout: 140000 //response timeout
+  }
+};
+
+  (new Backend).get(call, args, (data, response) => {
     LG('\n\n\n\n*************************');
     LG(data);
     // LG('.............');
