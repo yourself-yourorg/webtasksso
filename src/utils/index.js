@@ -19,12 +19,12 @@ export const wrapParams = req => {
   LG(`'wrapParams', 'dataForGetPage', ${dataForGetPage}`);
   LG(dataForGetPage);
   let parameters = JSON.stringify(dataForGetPage);
-  LG(`'testGetPage', 'parameters', ${parameters}` );
+  LG(`'wrapParams', 'parameters', ${parameters}` );
     LG(Tea);
   let ciphertext = Tea.encrypt(parameters, 'MTUyMDE5NTQ4NTE2Mg');
-  LG(`'testGetPage', 'ciphertext', ${ciphertext}` );
+  LG(`'wrapParams', 'ciphertext', ${ciphertext}` );
   let urltext = encodeURIComponent(ciphertext);
-  LG(`'testGetPage', 'encoded ciphertext', ${urltext} urltext` );
+  LG(`'wrapParams', 'encoded ciphertext', ${urltext} urltext` );
 
   return urltext;
 };

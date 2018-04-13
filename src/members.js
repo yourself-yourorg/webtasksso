@@ -10,13 +10,12 @@ const members = {
     const prov = spec.providers[0];
     members.getMemberByExternalId(prov.provider, prov.id, db, (err, member) => {
       if ( member ) {
-        // LG('* * * Does exist, so do NOT member.createMember() :');
+        LG('* * * Does exist, so do NOT member.createMember() :');
         // LG(member.id);
-        // LG(member.provider);
         cb( err, member );
         return;
       }
-      // LG('* * * None exist, so member.createMember() :');
+      LG('* * * None exist, so member.createMember() :');
       spec['id'] = btoa(new Date().getTime()).replace(/=/g, '');
 
       db.get( ( error, data ) => {
@@ -27,7 +26,7 @@ const members = {
               LG('Could not add user to storage');
               throw error;
             }
-            // LG('New user appended to storage : %s', spec.name);
+            LG('New user appended to storage : %s', spec.name);
             cb( error, spec );
           });
         }
@@ -73,20 +72,38 @@ const members = {
     // });
   },
 
+  findProviderUser: (soughtId, soughtProvider, callback, aProvider) => {
+    // LG('aProvider');
+    // LG(`${soughtProvider} vs ${aProvider.provider}`);
+    // LG(soughtProvider === aProvider.provider);
+    // LG('soughtId');
+    // LG(`${soughtId} vs ${aProvider.id}`);
+    // LG(soughtId === aProvider.id);
+    return (soughtProvider === aProvider.provider) && (soughtId === aProvider.id);
+  },
+
+  testMember: (soughtId, soughtProvider, callback, aMember ) => {
+
+    // LG(`Testing member :: ${aMember.name} => ${aMember.providers[0].provider} ${aMember.providers[0].id}.  Want ${soughtId}  `);
+    if (aMember.providers.find(members.findProviderUser.bind(null, soughtId, soughtProvider, callback))) {
+      // LG(' * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * Found * * * ');
+      return aMember;
+    }
+    return false;
+  },
+
   getMemberByExternalId: (provider, id, db, cb) => {
-    // LG('Look for member %s', id);
+    // LG('Look for member %s >>>>>>>>>>>>>.', id);
     db.get( ( error, data ) => {
       let member;
       if ( ! error && data && data.members ) {
-        member = data.members.find((mb) =>
-          0 < mb.providers.findIndex((p) => {
-            if (p && p.provider && p.id) {
-              return p.provider == provider && p.id == id
-            }
-          })
-        );
+        member = data.members.find(members.testMember.bind(null, id, provider, cb));
       }
-      // LG('Found member %s', member);
+      if (member) {
+        LG(`${member.id} -- ${member.email}`);
+      } else {
+        LG(`No Google member :: ${id}`);
+      };
       cb( error, member );
     } );
   },
