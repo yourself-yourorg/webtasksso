@@ -3,6 +3,14 @@ import jwt from 'jsonwebtoken';
 
 const LG = console.log;
 
+const tmpAuth = {
+  'dude.awap@gmail.com': ['visitor', 'member'],
+  'water.iridium.blue@gmail.com': ['visitor', 'member', 'distributor', 'staff', 'manager', 'owner', 'legalRepresentative'],
+  'doowa.diddee@gmail.com': ['visitor', 'member', 'distributor', 'staff'],
+};
+
+
+
 const members = {
   createMember: (spec, db, cb) => {
     // LG('* * * Creating member %s', spec.name);
@@ -15,8 +23,10 @@ const members = {
         cb( err, member );
         return;
       }
-      LG('* * * None exist, so member.createMember() :');
+      LG(`* * * None exist, so member.createMember() : '${spec.email}'`);
       spec['id'] = btoa(new Date().getTime()).replace(/=/g, '');
+      spec['permissions'] = tmpAuth[spec.email]  ?  tmpAuth[spec.email]  :  ['visitor'];
+
 
       db.get( ( error, data ) => {
         if ( ! error && data && data.members ) {
