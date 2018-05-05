@@ -7,61 +7,33 @@ import utils from '../../utils';
 const LG = console.log;
 const MODULE = 'person';
 
-// const articles = [
-//   {
-//     id: 1,
-//     title: ipsum.generateSentence(),
-//     content: ipsum.generateParagraph()
-//   },
-//   {
-//     id: 2,
-//     title: ipsum.generateSentence(),
-//     content: ipsum.generateParagraph()
-//   },
-//   {
-//     id: 3,
-//     title: ipsum.generateSentence(),
-//     content: ipsum.generateParagraph()
-//   }
-// ];
+const urlExec = 'https://script.google.com/macros/s/AKfycbwYXfwWirehfqH4F8KF-RUCOq65DJ0kYHPH86q9iqyPbNscYQ/exec';
+const urlDev = 'https://water.iridium.blue:gm%&RT+98+98@script.google.com/macros/s/AKfycbysbJ_YwiPPvn_bjGifJjsRa8LlwRlo4Q3nzS6i-g/dev';
 
-// const doCreate = (req, res, next) => {
-//   const id = articles[articles.length - 1].id + 1;
-//   const { body } = req;
+// *************************
+// const dbAPI = urlDev;
+const dbAPI = urlExec;
+// *************************
 
-//   const article = {
-//     id,
-//     title: body.title,
-//     content: body.content
-//   };
-
-//   articles.push(article);
-
-//   LG(`Create ${MODULE}.  Article #${id} created.`);
-//   res.json(article);
-// };
-// const dbAPI = 'https://script.google.com/macros/s/AKfycbyuyo0Wi60kHOFoswK3GTVVeWTfEEYF9JBl7NoL4nAxe08t9fo/exec';
-const dbAPI = 'https://script.google.com/macros/s/AKfycbwYXfwWirehfqH4F8KF-RUCOq65DJ0kYHPH86q9iqyPbNscYQ/exec';
-const payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
+// const payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
 
 const doRetrieve = (req, res, next) => {
   LG(`\n\n\n\n******* Getting ${MODULE}  ******\n\n\n`);
 
   let urltext = utils.wrapParams(req);
-  LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
+  // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
 
   let call = `${dbAPI}?q=${urltext}`;
   LG(call);
 
-
-var args = {
-  requestConfig: {
-    timeout: 140000, //request timeout in milliseconds
-  },
-  responseConfig: {
-    timeout: 140000 //response timeout
-  }
-};
+  var args = {
+    requestConfig: {
+      timeout: 140000, //request timeout in milliseconds
+    },
+    responseConfig: {
+      timeout: 140000 //response timeout
+    }
+  };
 
   (new Backend).get(call, args, (data, response) => {
     LG('\n\n\n\n*************************');
@@ -77,27 +49,50 @@ var args = {
   })
 }
 
-const doCreate = (req, res, next) => {
-    const data = { x: 'Not implemented'}
-    LG('\n\n\n\n*********  doCreate ***********');
-    LG(data);
+const doCreate = (req, res, next, mode) => {
+  LG('\n\n\n\n*********  doCreate ***********');
+  LG(req.body);
+  LG('*************\n\n\n\n');
+
+  let urltext = utils.wrapParams(req, mode);
+
+  var args = {
+    requestConfig: {
+      timeout: 140000, //request timeout in milliseconds
+    },
+    responseConfig: {
+      timeout: 140000 //response timeout
+    },
+    data: req.body.data,
+    headers: { "Content-Type": "application/json" }
+  };
+
+  // let call = `${dbAPI}?q=${urltext}`;
+  let call = `${dbAPI}?q=${urltext}`;
+  LG(call);
+  (new Backend).post(call, args, (data, response) => {
+    LG('\n\n\n\n*************************');
+    LG(data.toString());
     LG('*************\n\n\n\n');
 
     res.json(data);
     return;
+
+  })
 }
 
-const doList = (req, res, next) => {
+const doList = (req, res, next, mode) => {
   LG(`\n\n\n\n******* Listing all ${MODULE}s ******\n\n\n`);
+  LG(req);
 
-  let urltext = utils.wrapParams(req);
-  LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
+  let urltext = utils.wrapParams(req, mode);
+  // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
 
   let call = `${dbAPI}?q=${urltext}`;
   LG(call);
   (new Backend).get(call, (data, response) => {
     LG('\n\n\n\n*************************');
-    LG(data);
+    LG(data.toString());
     // LG('.............');
     // LG(payload);
     // LG(urltext);
@@ -195,10 +190,14 @@ const doList = (req, res, next) => {
 // };
 
 export default {
-  POST: (req, res, next) => doCreate(req, res, next),
-  GET: (req, res, next) => doRetrieve(req, res, next),
-  LIST: (req, res, next) => doList(req, res, next),
-  // PATCH: (req, res, next) => doReplace(req, res, next),  // FIXME
-  // PUT: (req, res, next) => doReplace(req, res, next),
-  // DELETE: (req, res, next) => doDelete(req, res, next),
+  POST: (req, res, next, mode) => doCreate(req, res, next, mode),
+  // POST: (req, res, next, mode) => {
+  //   LG('**************  Got Here   ******************');
+  //   LG(req.body);
+  // },
+  GET: (req, res, next, mode) => doRetrieve(req, res, next, mode),
+  LIST: (req, res, next, mode) => doList(req, res, next, mode),
+  // PATCH: (req, res, next, mode) => doReplace(req, res, next, mode),  // FIXME
+  PUT: (req, res, next, mode) => doReplace(req, res, next, mode),
+  // DELETE: (req, res, next, mode) => doDelete(req, res, next, mode),
 }

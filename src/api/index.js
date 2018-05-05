@@ -15,13 +15,13 @@ const modules = {
 // }
 
 export default {
-  POST: (req, res, next) => modules[req.params.module].POST(req, res, next),
-  GET: (req, res, next) => modules[req.params.module].GET(req, res, next),
-  LIST: (req, res, next) => modules[req.params.module].LIST(req, res, next),
+  POST: (req, res, next) => modules[req.params.module].POST(req, res, next, 'post'),
+  GET: (req, res, next) => modules[req.params.module].GET(req, res, next, 'get'),
+  LIST: (req, res, next) => modules[req.params.module].LIST(req, res, next, 'list'),
   PATCH: (req, res, next) => {
     LG(req.param);
-    modules[req.params.module].PATCH(req, res, next);
+    modules[req.params.module].PATCH(req, res, next, 'patch');
   },
-  PUT: (req, res, next) => modules[req.params.module].PUT(req, res, next),
-  DELETE: (req, res, next) => modules[req.params.module].DELETE(req, res, next),
+  PUT: (req, res, next) => modules[req.params.module].PUT(req, res, next, 'put'),
+  DELETE: (req, res, next) => modules[req.params.module].DELETE(req, res, next, 'delete'),
 }

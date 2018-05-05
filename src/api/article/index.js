@@ -38,11 +38,13 @@ const doCreate = (req, res, next) => {
   LG(`Create ${MODULE}.  Article #${id} created.`);
   res.json(article);
 };
+
 const doList = (req, res, next) => {
   LG(`Listing all ${MODULE}s..`);
   res.json(articles);
   return;
 };
+
 const doRetrieve = (req, res, next) => {
   const article = articles.find(a => a.id.toString() === req.params.id);
   const index = articles.indexOf(article);

@@ -61,6 +61,23 @@ app.use(jwt.init());
 
 // app.patch('/api/articles/:id', api.PATCH);
 
+app.get('/qget', (req, res, next) => {
+    res.send('Quick GET test response');
+    next();
+}, () => {
+    LG('* * * Finished sending GET response\n');
+    LG(api);
+});
+app.post('/qpost/:module', (req, res, next) => {
+    // res.send('Quick POST test response');
+    // LG(req.body);
+    api.POST(req, res, next);
+    next();
+}, () => {
+    LG('* * * Finished sending POST response\n');
+    LG(api);
+});
+
 app.get('/api/:module',
     passport.authenticate(['jwt'], { session: false }),
     api.LIST
@@ -248,7 +265,7 @@ app.get('/', (req, res) => {
     });
 // LG('%%%%%%%%%%%%%%%%%%%%%%%');
 // LG(req);
-LG('%%%%%%%%%%%%%%%%%%%%%%%');
+LG('%%%%%%%%% == | == %%%%%%%%%');
     res.set('Content-Type', 'text/html');
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

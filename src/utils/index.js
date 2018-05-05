@@ -2,19 +2,15 @@ import Tea from './tea';
 
 const LG = console.log;
 
-var dataForGetPage = {
-  size: "0",
-  start: "0",
-  store: "",
-  id: ""
-};
+var dataForGetPage = {};
 
-export const wrapParams = req => {
+export const wrapParams = (req, mode) => {
   LG(`'wrapParams', 'req.params', ${JSON.stringify(req.params)}` );
-  dataForGetPage.size = req.query.c;
-  dataForGetPage.start = req.query.s;
   dataForGetPage.store = req.params.module;
-  dataForGetPage.id = req.params.id;
+  dataForGetPage.mode = mode;
+  if ( req.query.c ) dataForGetPage.size = req.query.c;
+  if ( req.query.s ) dataForGetPage.start = req.query.s;
+  if ( req.params.id ) dataForGetPage.id = req.params.id;
 
   LG(`'wrapParams', 'dataForGetPage', ${dataForGetPage}`);
   LG(dataForGetPage);
