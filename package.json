@@ -5,7 +5,9 @@
   "main": "index.js",
   "author": "Martin H. Bramwell,Warehouseman",
   "license": "MIT",
-  "config": {"profile": "Yourself"},
+  "config": {
+    "profile": "Yourself"
+  },
   "scripts": {
     "ek": "echo $npm_package_name",
     "upd": "wt update -p $npm_package_config_profile --bundle $npm_package_name ./src",

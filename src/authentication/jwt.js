@@ -1,5 +1,5 @@
-const passport = require('passport');
-const passportJwt = require('passport-jwt');
+import passport from 'passport';
+import { Strategy, ExtractJwt as Extractor } from 'passport-jwt';
 
 import members from '../members';
 
@@ -15,14 +15,14 @@ const jwt = {
       jwt.db = req.webtaskContext.storage;
 
       const jwtOptions = {
-        jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderWithScheme("jwt"),
+        jwtFromRequest: Extractor.fromAuthHeaderWithScheme("jwt"),
         secretOrKey: jwt.secrets.JWT_SIGNING_KEY,
         issuer: jwt.secrets.JWT_ISSUER,
         audience: jwt.secrets.JWT_AUDIENCE
       };
 
       if (jwtOptions.audience) {
-        passport.use(new passportJwt.Strategy(jwtOptions, (payload, done) => {
+        passport.use(new Strategy(jwtOptions, (payload, done) => {
           const member = members.getMemberById( 'google', payload.sub, jwt.db, (err, member) => {
             // LG('* * * JWT member * * * ');
             // LG( member );

@@ -1,5 +1,5 @@
 import { Client as Backend} from 'node-rest-client';
-import utils from '../../utils';
+import { wrapParams } from '../../utils';
 // import Ipsum from 'bavaria-ipsum';
 
 // const ipsum = new Ipsum();
@@ -20,7 +20,7 @@ const dbAPI = urlExec;
 const doRetrieve = (req, res, next) => {
   LG(`\n\n\n\n******* Getting ${MODULE}  ******\n\n\n`);
 
-  let urltext = utils.wrapParams(req);
+  let urltext = wrapParams(req);
   // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
 
   let call = `${dbAPI}?q=${urltext}`;
@@ -54,7 +54,7 @@ const doCreate = (req, res, next, mode) => {
   LG(req.body);
   LG('*************\n\n\n\n');
 
-  let urltext = utils.wrapParams(req, mode);
+  let urltext = wrapParams(req, mode);
 
   var args = {
     requestConfig: {
@@ -83,22 +83,21 @@ const doCreate = (req, res, next, mode) => {
 
 const doList = (req, res, next, mode) => {
   LG(`\n\n\n\n******* Listing all ${MODULE}s ******\n\n\n`);
-  LG(req);
-
-  let urltext = utils.wrapParams(req, mode);
+  LG(req.params);
+  let urltext = wrapParams(req, mode);
   // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
 
   let call = `${dbAPI}?q=${urltext}`;
   LG(call);
   (new Backend).get(call, (data, response) => {
-    LG('\n\n\n\n*************************');
-    LG(data.toString());
+    LG(`********** 2nd ${req.params.module} *********`);
+    LG(data[req.params.module].data[1]);
     // LG('.............');
     // LG(payload);
     // LG(urltext);
-    LG('*************\n\n\n\n');
 
     res.json(data);
+    LG(`************* sent ************`);
     return;
 
   })
