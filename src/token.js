@@ -6,7 +6,7 @@ function generateAccessToken(request) {
 
     const secrets = request.webtaskContext.secrets;
 
-    const expiresIn = '1 hour';
+    const expiresIn = secrets.JWT_EXPIRY;
     const audience = secrets.JWT_AUDIENCE;
     const issuer = secrets.JWT_ISSUER;
     const secret = secrets.JWT_SIGNING_KEY;
@@ -20,7 +20,7 @@ function generateAccessToken(request) {
         subject: request.user.id.toString()
     });
 
-    LG('----');
+    LG(`---- expiry :: ${expiresIn}`);
     LG(token);
     LG('----');
     return token;

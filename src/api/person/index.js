@@ -71,8 +71,10 @@ const doCreate = (req, res, next, mode) => {
   let call = `${dbAPI}?q=${urltext}`;
   LG(call);
   (new Backend).post(call, args, (data, response) => {
-    LG('\n\n\n\n*************************');
-    LG(data.toString());
+    LG('\n\n\n\n*********** returning **************');
+    LG(data);
+    // LG('-----');
+    // LG(response);
     LG('*************\n\n\n\n');
 
     res.json(data);
@@ -90,8 +92,9 @@ const doList = (req, res, next, mode) => {
   let call = `${dbAPI}?q=${urltext}`;
   LG(call);
   (new Backend).get(call, (data, response) => {
-    LG(`********** 2nd ${req.params.module} *********`);
-    LG(data[req.params.module].data[1]);
+    LG(`********** Last ${req.params.module} *********`);
+    const list = data[req.params.module].data;
+    LG(list[list.length - 1]);
     // LG('.............');
     // LG(payload);
     // LG(urltext);
