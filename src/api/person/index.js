@@ -51,7 +51,7 @@ const doRetrieve = (req, res, next) => {
 
 const doCreate = (req, res, next, mode) => {
   LG('\n\n\n\n*********  doCreate ***********');
-  LG(req.body);
+  LG(req.body.data);
   LG('*************\n\n\n\n');
 
   let urltext = wrapParams(req, mode);
@@ -72,7 +72,17 @@ const doCreate = (req, res, next, mode) => {
   LG(call);
   (new Backend).post(call, args, (data, response) => {
     LG('\n\n\n\n*********** returning **************');
+    LG('data');
     LG(data);
+
+    if (data.length) {
+      let val = '';
+      for (let ii = 0 ; ii < data.length ; ii += 1) {
+        val += String.fromCharCode(data[ii]);
+      }
+      LG(val);
+    }
+
     // LG('-----');
     // LG(response);
     LG('*************\n\n\n\n');
@@ -95,8 +105,9 @@ const doList = (req, res, next, mode) => {
     LG(`********** Last ${req.params.module} *********`);
     const list = data[req.params.module].data;
     LG(list[list.length - 1]);
-    // LG('.............');
-    // LG(payload);
+    LG('.............');
+    // LG(data[req.params.module].enums);
+    LG(data);
     // LG(urltext);
 
     res.json(data);
@@ -106,65 +117,19 @@ const doList = (req, res, next, mode) => {
   })
 };
 
-// const doRetrieve = (req, res, next) => {
-//   const article = articles.find(a => a.id.toString() === req.params.id);
-//   const index = articles.indexOf(article);
+const doUpdate = (req, res, next) => {
+  LG(`Update ${MODULE}/${req.params.id}.  Not implemented yet.`);
+  LG(req.body.data);
+  const data = {};
+  // const data = { codigo: req.params.id, id: 888 };
 
-//   LG(`Retrieve ${MODULE} Article #${req.params.id} retrieved.`);
-//   res.json(articles[index]);
+  data[req.params.module] = { data: { codigo: req.params.id, id: 808 }};
+  LG('data');
+  LG(data);
 
-//   // const secrets = req.webtaskContext.secrets;
-//   // const oauth2Client = new OAuth2Client(
-//   //     secrets.GOOGLE_CLIENTID,
-//   //     secrets.GOOGLE_CLIENTSECRET,
-//   //     secrets.GOOGLE_REDIRECT_URI
-//   // );
-//   // const provider = req.user.providers[0];
-//   // const creds = {
-//   //     access_token: provider.tkn,
-//   //     refresh_token: provider.rfr
-//   // }
-//   // oauth2Client['credentials'] = creds;
-
-
-//   // gapis.sheets('v4').spreadsheets.values.get({
-//   //     auth: oauth2Client,
-//   //     spreadsheetId: '1NITk258-perOnxMk4iqeRvLDLMlasuZXNEM1J82kcEk',
-//   //     range: 'Screwy!A1:B4',
-//   // }, function(err, response) {
-//   //     if (err) {
-//   //       LG('The API returned an error: ' + err);
-//   //       return;
-//   //     }
-//   //     if ( response ) {
-//   //         LG(' response ');
-//   //         LG( response );
-//   //         var rows = response.values;
-//   //         if ( rows && rows.length > 0) {
-//   //           LG('A, B');
-//   //           for (var i = 0; i < rows.length; i++) {
-//   //             var row = rows[i];
-//   //             // Print columns A and E, which correspond to indices 0 and 4.
-//   //             LG('%s, %s', row[0], row[4]);
-//   //           }
-//   //         } else {
-//   //           LG('No data found.');
-//   //         }
-//   //     } else {
-//   //       LG('Got no response at all.');
-//   //     }
-//   // });
-// };
-
-// const doUpdate = (req, res, next) => {
-//   LG(`Update ${MODULE}/${req.params.id}.  Not implemented.`);
-//   res.json(  {
-//     id: 9999999999,
-//     title: '',
-//     content: '',
-//   });
-//   next();
-// };
+  res.json({ itemID: req.params.id });
+  return;
+};
 
 // const doReplace = (req, res, next) => {
 //   const { body } = req;
@@ -199,7 +164,7 @@ export default {
   // },
   GET: (req, res, next, mode) => doRetrieve(req, res, next, mode),
   LIST: (req, res, next, mode) => doList(req, res, next, mode),
-  // PATCH: (req, res, next, mode) => doReplace(req, res, next, mode),  // FIXME
-  PUT: (req, res, next, mode) => doReplace(req, res, next, mode),
+  PATCH: (req, res, next, mode) => doUpdate(req, res, next, mode),
+  // PUT: (req, res, next, mode) => doReplace(req, res, next, mode),
   // DELETE: (req, res, next, mode) => doDelete(req, res, next, mode),
 }
