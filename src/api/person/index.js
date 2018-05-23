@@ -51,7 +51,10 @@ const doRetrieve = (req, res, next) => {
 
 const doCreate = (req, res, next, mode) => {
   LG('\n\n\n\n*********  doCreate ***********');
+  LG('req.body.data');
   LG(req.body.data);
+  LG('mode');
+  LG(mode);
   LG('*************\n\n\n\n');
 
   let urltext = wrapParams(req, mode);
@@ -107,7 +110,7 @@ const doList = (req, res, next, mode) => {
     LG(list[list.length - 1]);
     LG('.............');
     // LG(data[req.params.module].enums);
-    LG(data);
+    // LG(data);
     // LG(urltext);
 
     res.json(data);
@@ -117,18 +120,51 @@ const doList = (req, res, next, mode) => {
   })
 };
 
-const doUpdate = (req, res, next) => {
+const doUpdate = (req, res, next, mode) => {
   LG(`Update ${MODULE}/${req.params.id}.  Not implemented yet.`);
+  LG('req.body.data');
   LG(req.body.data);
-  const data = {};
-  // const data = { codigo: req.params.id, id: 888 };
+  LG('mode');
+  LG(mode);
+  LG('*************\n\n\n\n');
 
-  data[req.params.module] = { data: { codigo: req.params.id, id: 808 }};
-  LG('data');
-  LG(data);
+  let urltext = wrapParams(req, mode);
 
-  res.json({ itemID: req.params.id });
-  return;
+  var args = {
+    requestConfig: {
+      timeout: 140000, //request timeout in milliseconds
+    },
+    responseConfig: {
+      timeout: 140000 //response timeout
+    },
+    data: req.body.data,
+    headers: { "Content-Type": "application/json" }
+  };
+
+  // let call = `${dbAPI}?q=${urltext}`;
+  let call = `${dbAPI}?q=${urltext}`;
+  LG(call);
+  (new Backend).post(call, args, (data, response) => {
+    LG('\n\n\n\n*********** returning **************');
+    LG('data');
+    LG(data);
+
+    if (data.length) {
+      let val = '';
+      for (let ii = 0 ; ii < data.length ; ii += 1) {
+        val += String.fromCharCode(data[ii]);
+      }
+      LG(val);
+    }
+
+    // LG('-----');
+    // LG(response);
+    LG('*************\n\n\n\n');
+
+    res.json(data);
+    return;
+
+  })
 };
 
 // const doReplace = (req, res, next) => {
