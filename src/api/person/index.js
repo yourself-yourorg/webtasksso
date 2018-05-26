@@ -8,7 +8,6 @@ const LG = console.log;
 const MODULE = 'person';
 
 const urlExec = 'https://script.google.com/macros/s/AKfycbwYXfwWirehfqH4F8KF-RUCOq65DJ0kYHPH86q9iqyPbNscYQ/exec';
-const urlDev = 'https://water.iridium.blue:gm%&RT+98+98@script.google.com/macros/s/AKfycbysbJ_YwiPPvn_bjGifJjsRa8LlwRlo4Q3nzS6i-g/dev';
 
 // *************************
 // const dbAPI = urlDev;
@@ -17,13 +16,16 @@ const dbAPI = urlExec;
 
 // const payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
 
-const doRetrieve = (req, res, next) => {
-  LG(`\n\n\n\n******* Getting ${MODULE}  ******\n\n\n`);
+export const getPerson = (request, cb) => {
 
-  let urltext = wrapParams(req);
-  // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
+  LG(
+    `getPerson: `);
+  LG( request.params );
+
+  let urltext = wrapParams(request, 'get');
 
   let call = `${dbAPI}?q=${urltext}`;
+  LG('call');
   LG(call);
 
   var args = {
@@ -36,17 +38,28 @@ const doRetrieve = (req, res, next) => {
   };
 
   (new Backend).get(call, args, (data, response) => {
-    LG('\n\n\n\n*************************');
+    LG('\n\n\n\n************ getPerson *************');
     LG(data);
     // LG('.............');
     // LG(payload);
     // LG(urltext);
     LG('*************\n\n\n\n');
 
-    res.json(data);
-    return;
+    cb('', data)
+    // if (res) res.json(data);
+    // return data;
 
-  })
+  });
+
+};
+
+
+const doRetrieve = (req, res, next) => {
+  LG(`\n\n\n\n******* Getting ${MODULE}  ******\n\n\n`);
+
+  getPerson(req, res)
+  // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
+
 }
 
 const doCreate = (req, res, next, mode) => {

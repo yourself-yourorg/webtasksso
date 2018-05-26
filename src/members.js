@@ -1,6 +1,8 @@
 import btoa from 'btoa';
 import jwt from 'jsonwebtoken';
 
+import { getPerson } from './api/person';
+
 const LG = console.log;
 
 const tmpAuth = {
@@ -12,20 +14,74 @@ const tmpAuth = {
 
 
 const members = {
+  getMemberPrivileges: (_req, _cb) => {
+    let req = _req;
+    req.params.module = 'person';
+    LG(
+      `getMemberPrivileges: `);
+    LG( req.params );
+    const result = getPerson(req, _cb);
+    return result
+  },
+
   createMember: (spec, db, cb) => {
     // LG('* * * Creating member %s', spec.name);
 
     const prov = spec.providers[0];
     members.getMemberByExternalId(prov.provider, prov.id, db, (err, member) => {
       if ( member ) {
-        LG('* * * Does exist, so do NOT member.createMember() :');
-        // LG(member.id);
+        LG('* * * Does exist, so refresh user privileges :');
+        LG(member.id);
+        LG(member.email);
+        const req = {
+          params: {
+            module: 'person',
+            email: member.email
+          }
+        };
+        members.getMemberPrivileges( req, (err, res) => {
+          LG(`
+            getMemberPrivileges   callback !!!!!!!!!!`);
+
+          if (res.permissions) {
+            LG(res.permissions);
+
+            db.get( ( error, data ) => {
+              if ( ! error && data && data.members ) {
+                let D = data;
+                let M = D.members;
+                LG(`
+                  data.members.id: <${member.id}> <${member.permissions}>`);
+                LG(data.members);
+                let memb = 0;
+                while ((memb < M.length) && (M[memb].id != member.id) ) {
+                  LG(`
+                    data.members.id: <${M[memb].id}> vs <${member.id}>`);
+                  memb += 1;
+                }
+                LG(`
+                  Found M[${memb}].id: <${M[memb].id}> <${M[memb].permissions}>`);
+                M[memb].permissions = res.permissions;
+                LG(`
+                  Found M[${memb}].id: <${M[memb].id}> <${D.members[memb].permissions}>`);
+                db.set( D, error => {
+                  if ( error ) {
+                    LG('Could not alter user privileges in storage');
+                    throw error;
+                  }
+                  LG('Altered user privileges in storage : %s', data.members[memb].name);
+                  cb( error, D );
+                });
+              }
+            });
+          }
+        });
         cb( err, member );
         return;
       }
       LG(`* * * None exist, so member.createMember() : '${spec.email}'`);
       spec['id'] = btoa(new Date().getTime()).replace(/=/g, '');
-      spec['permissions'] = tmpAuth[spec.email]  ?  tmpAuth[spec.email]  :  ['visitor'];
+      spec['permissions'] = "{ 'Example': 2, 'Person': 0 }";
 
 
       db.get( ( error, data ) => {

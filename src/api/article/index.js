@@ -41,58 +41,39 @@ const doCreate = (req, res, next) => {
 
 const doList = (req, res, next) => {
   LG(`Listing all ${MODULE}s..`);
+  LG(req);
   res.json(articles);
   return;
 };
 
 const doRetrieve = (req, res, next) => {
+  LG(`Retrieving ${MODULE} #${req.params.id} .***********************************************************`);
+
+  for (let prop in req) {
+    if (req.hasOwnProperty(prop)) {
+      LG(`Property: ${prop}`);
+    }
+  }
+
+  LG(`Property 'req.method': ${req.method}`);
+  LG(`Property 'req.user': `);
+  LG(req.user);
+  LG(`Property 'req.route': `);
+  LG(req.route);
+  LG(`Property 'req.body': `);
+  LG(req.body);
+  LG(`Property 'req.query': `);
+  LG(req.query);
+  LG(`Property 'req.params': `);
+  LG(req.params);
+
+
   const article = articles.find(a => a.id.toString() === req.params.id);
   const index = articles.indexOf(article);
 
   LG(`Retrieve ${MODULE} Article #${req.params.id} retrieved.`);
   res.json(articles[index]);
 
-  // const secrets = req.webtaskContext.secrets;
-  // const oauth2Client = new OAuth2Client(
-  //     secrets.GOOGLE_CLIENTID,
-  //     secrets.GOOGLE_CLIENTSECRET,
-  //     secrets.GOOGLE_REDIRECT_URI
-  // );
-  // const provider = req.user.providers[0];
-  // const creds = {
-  //     access_token: provider.tkn,
-  //     refresh_token: provider.rfr
-  // }
-  // oauth2Client['credentials'] = creds;
-
-
-  // gapis.sheets('v4').spreadsheets.values.get({
-  //     auth: oauth2Client,
-  //     spreadsheetId: '1NITk258-perOnxMk4iqeRvLDLMlasuZXNEM1J82kcEk',
-  //     range: 'Screwy!A1:B4',
-  // }, function(err, response) {
-  //     if (err) {
-  //       LG('The API returned an error: ' + err);
-  //       return;
-  //     }
-  //     if ( response ) {
-  //         LG(' response ');
-  //         LG( response );
-  //         var rows = response.values;
-  //         if ( rows && rows.length > 0) {
-  //           LG('A, B');
-  //           for (var i = 0; i < rows.length; i++) {
-  //             var row = rows[i];
-  //             // Print columns A and E, which correspond to indices 0 and 4.
-  //             LG('%s, %s', row[0], row[4]);
-  //           }
-  //         } else {
-  //           LG('No data found.');
-  //         }
-  //     } else {
-  //       LG('Got no response at all.');
-  //     }
-  // });
 };
 
 const doUpdate = (req, res, next) => {
