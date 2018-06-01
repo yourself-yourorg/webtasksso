@@ -44,7 +44,7 @@ const google = {
               ]
             };
 
-            members.createMember(spec, google.db, ( err, member ) => {
+            members.createMember(spec, google, ( err, member ) => {
               // LG(`Google strategy got back member :`);
               // LG(member);
               return done(null, member);

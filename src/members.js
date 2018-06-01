@@ -24,8 +24,9 @@ const members = {
     return result
   },
 
-  createMember: (spec, db, cb) => {
+  createMember: (spec, ctx, cb) => {
     // LG('* * * Creating member %s', spec.name);
+    const { db, secrets } = ctx;
 
     const prov = spec.providers[0];
     members.getMemberByExternalId(prov.provider, prov.id, db, (err, member) => {
@@ -37,7 +38,8 @@ const members = {
           params: {
             module: 'person',
             email: member.email
-          }
+          },
+          webtaskContext: { secrets },
         };
         members.getMemberPrivileges( req, (err, res) => {
           LG(`
