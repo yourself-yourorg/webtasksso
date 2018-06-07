@@ -1,5 +1,5 @@
 import { Client as Backend} from 'node-rest-client';
-import { wrapParams } from '../../utils';
+import utilities from '../../utils';
 // import Ipsum from 'bavaria-ipsum';
 
 // const ipsum = new Ipsum();
@@ -13,7 +13,7 @@ const MODULE = 'product';
 const doList = (req, res, next, mode) => {
   LG(`\n\n\n\n******* Listing (${mode}) all ${MODULE}s ******\n\n\n`);
   LG(req.params);
-  let urltext = wrapParams(req, mode);
+  let urltext = utilities.wrapParams(req, mode);
   // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
 
   let call = `${req.webtaskContext.secrets.BACKEND_URL}?q=${urltext}`;

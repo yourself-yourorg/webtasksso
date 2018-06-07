@@ -1,19 +1,45 @@
 import { Client as Backend} from 'node-rest-client';
 import utilities from '../../utils';
-// import Ipsum from 'bavaria-ipsum';
-
-// const ipsum = new Ipsum();
+// import {
+//   wrapParams,
+//   doList as genericDoList,
+// } from '../../utils';
 
 const LG = console.log;
-const MODULE = 'person';
+const MODULE = 'invoice';
 
 // const payload = '8CUj01QVX9tDqUuE%2FwE3CPEPqWi%2FG85iIfjf71%2Fv61eZuFEdwMjl7tTxsOIqom7N26Q6Og%3D%3D';
 
-export const getPerson = (request, cb) => {
+const doList = (req, res, next, mode) => {
+  LG(`\n\n\n\n******* Listing all ${MODULE}s ******\n\n\n`);
+  utilities.doList(req, res, next, mode);
+  // LG(`\n\n\n\n******* Listing all ${MODULE}s ******\n\n\n`);
+  // LG(req.params);
+  // let urltext = utilities.wrapParams(req, mode);
+  // // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
+
+  // let call = `${req.webtaskContext.secrets.BACKEND_URL}?q=${urltext}`;
+  // LG(call);
+  // (new Backend).get(call, (data, response) => {
+  //   LG(`********** Last ${req.params.module} *********`);
+  //   const list = data[req.params.module].data;
+  //   LG(list[list.length - 1]);
+  //   LG('.............');
+  //   // LG(data[req.params.module].enums);
+  //   // LG(data);
+  //   // LG(urltext);
+
+  //   res.json(data);
+  //   LG(`************* sent ************`);
+  //   return;
+
+  // })
+};
+
+export const getInvoice = (request, cb) => {
 
   LG(
-    `getPerson: `);
-  LG(utilities);
+    `getInvoice: `);
   LG( request.webtaskContext.secrets );
 
   let urltext = utilities.wrapParams(request, 'get');
@@ -32,7 +58,7 @@ export const getPerson = (request, cb) => {
   };
 
   (new Backend).get(call, args, (data, response) => {
-    LG('\n\n\n\n************ getPerson *************');
+    LG('\n\n\n\n************ getInvoice *************');
     LG(data);
     // LG('.............');
     // LG(payload);
@@ -51,7 +77,7 @@ export const getPerson = (request, cb) => {
 const doRetrieve = (req, res, next) => {
   LG(`\n\n\n\n******* Getting ${MODULE}  ******\n\n\n`);
 
-  getPerson(req, res)
+  getInvoice(req, res)
   // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
 
 }
@@ -101,31 +127,6 @@ const doCreate = (req, res, next, mode) => {
 
   })
 }
-
-const doList = (req, res, next, mode) => {
-  LG(`\n\n\n\n******* Listing all ${MODULE}s ******\n\n\n`);
-  LG(req.params);
-  LG(utilities);
-  let urltext = utilities.wrapParams(req, mode);
-  // LG(`'testGetPage', 'encoded ciphertext', ${payload} payload` );
-
-  let call = `${req.webtaskContext.secrets.BACKEND_URL}?q=${urltext}`;
-  LG(call);
-  (new Backend).get(call, (data, response) => {
-    LG(`********** Last ${req.params.module} *********`);
-    const list = data[req.params.module].data;
-    LG(list[list.length - 1]);
-    LG('.............');
-    // LG(data[req.params.module].enums);
-    // LG(data);
-    // LG(urltext);
-
-    res.json(data);
-    LG(`************* sent ************`);
-    return;
-
-  })
-};
 
 const doUpdate = (req, res, next, mode) => {
   LG(`Update ${MODULE}/${req.params.id}.  Not implemented yet.`);

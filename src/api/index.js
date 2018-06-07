@@ -1,6 +1,7 @@
 import articles from './article';
 import person from './person';
 import product from './product';
+import invoice from './invoice';
 
 
 const LG = console.log;
@@ -9,6 +10,7 @@ const modules = {
   articles,
   person,
   product,
+  invoice,
 };
 
 export default {
